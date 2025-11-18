@@ -4,23 +4,25 @@ service: api-web-scraping-sismos
 provider:
   name: aws
   runtime: python3.13
-  memorySize: 2048  # Playwright necesita más memoria
-  timeout: 60  # Más tiempo para cargar la página
+  region: us-east-1
+  memorySize: 2048
+  timeout: 25   # Máximo permitido por API Gateway (29s)
   iam:
-    role: arn:aws:iam::076456812464:role/LabRole  # Actualiza con tu ARN
+    role: arn:aws:iam::076456812464:role/LabRole
+
   ecr:
     images:
       scraping-sismos:
-        path: ./
+        path: ./  # usa tu Dockerfile en este mismo folder
 
 functions:
   scrape_sismos:
     image:
       name: scraping-sismos
     events:
-      - http:
+      - httpApi:
           path: /scrape/sismos
-          method: get
+          method: GET
           cors: true
 
 resources:
