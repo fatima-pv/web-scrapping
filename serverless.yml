@@ -1,29 +1,29 @@
-org: fatimapv  # Actualiza con tu organización
+org: fatimapv  # Tu organización en Serverless
 service: api-web-scraping-sismos
 
 provider:
   name: aws
   runtime: python3.13
   region: us-east-1
-  memorySize: 2048
-  timeout: 25   # Máximo permitido por API Gateway (29s)
+  memorySize: 2048        # Playwright necesita más memoria
+  timeout: 25             # < 29s de límite de API Gateway
   iam:
     role: arn:aws:iam::076456812464:role/LabRole
-
   ecr:
     images:
       scraping-sismos:
-        path: ./  # usa tu Dockerfile en este mismo folder
+        path: ./          # Usa tu Dockerfile del proyecto actual
 
 functions:
   scrape_sismos:
     image:
       name: scraping-sismos
     events:
-      - httpApi:
+      - http:
           path: /scrape/sismos
-          method: GET
-          cors: true
+          method: get
+          cors: true       # Igual que en la tarea de bomberos
+          integration: lambda
 
 resources:
   Resources:
