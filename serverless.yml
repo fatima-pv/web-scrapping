@@ -1,0 +1,38 @@
+org: fatimapv  # Actualiza con tu organización
+service: api-web-scraping-sismos
+
+provider:
+  name: aws
+  runtime: python3.13
+  memorySize: 2048  # Playwright necesita más memoria
+  timeout: 60  # Más tiempo para cargar la página
+  iam:
+    role: arn:aws:iam::076456812464:role/LabRole  # Actualiza con tu ARN
+  ecr:
+    images:
+      scraping-sismos:
+        path: ./
+
+functions:
+  scrape_sismos:
+    image:
+      name: scraping-sismos
+    events:
+      - http:
+          path: /scrape/sismos
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    TablaSismosIGP:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: TablaSismosIGP
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
